@@ -1,0 +1,7 @@
+model:
+  checkpoint_path: "checkpoints/qwen_banking_intent"
+  max_seq_length: 256
+  
+paths:
+  labels_csv: "sample_data/labels.csv"
+  test_csv: "sample_data/test.csv"

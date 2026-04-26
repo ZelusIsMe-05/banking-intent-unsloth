@@ -1,0 +1,10 @@
+torch
+transformers
+datasets
+pandas
+numpy
+pyyaml
+scikit-learn
+evaluate
+trl
+unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git

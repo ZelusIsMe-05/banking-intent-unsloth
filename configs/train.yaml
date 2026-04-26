@@ -1,0 +1,25 @@
+model:
+  name: "unsloth/Qwen3-4B-Base"
+  max_seq_length: 256
+  num_labels: 77
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+training:
+  batch_size: 16
+  learning_rate: 2.0e-4
+  epochs: 3
+  optimizer: "adamw_8bit"
+  weight_decay: 0.01
+  warmup_steps: 10
+  lr_scheduler_type: "cosine"
+  seed: 3407
+
+paths:
+  train_data: "sample_data/train.csv"
+  test_data: "sample_data/test.csv"
+  output_dir: "checkpoints/qwen_banking_intent"

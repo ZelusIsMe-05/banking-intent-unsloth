@@ -239,6 +239,8 @@ Script này sẽ:
 }
 ```
 
-## 6. Video demonstration
+## 6. Các liên kết liên quan
 
 Thầy có thể truy cập link chứa video demo được em gắn ở đây: [VIdeo demo tại đây](https://drive.google.com/file/d/13u1VI15q0UhkXsafeG5Z8ccin0WMILVz/view?usp=sharing).
+
+Thư mục chứa checkpoints của em sau khi được huấn luyện: [Checkpoints tại đây](https://drive.google.com/drive/folders/1-j5gcJaPAiBqyduRS87lcW0UwJfL02k2?usp=sharing).

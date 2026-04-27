@@ -1,7 +1,13 @@
 # Project 2: FINE-TUNING INTENT DETECTION MODEL WITH BANKING DATASET
 
 **Sinh viên thực hiện:** Đặng Lê Đức Thịnh
+
 **MSSV:** 23120360
+
+**Khoa:** Công nghệ thông tin
+
+**Trường:** Đại học Khoa học Tự nhiên, ĐHQG-HCM
+
 
 ## 1. Tổng quan
 

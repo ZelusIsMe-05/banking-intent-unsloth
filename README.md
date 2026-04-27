@@ -1,5 +1,8 @@
 # Project 2: FINE-TUNING INTENT DETECTION MODEL WITH BANKING DATASET
 
+**Sinh viên thực hiện:** Đặng Lê Đức Thịnh
+**MSSV:** 23120360
+
 ## 1. Tổng quan
 
 Đồ án thực hiện **Instruction Fine-tuning** mô hình `Qwen3-4B-Base` để phân loại 77 loại ý định của khách hàng trong lĩnh vực ngân hàng. Thay vì huấn luyện lại toàn bộ mô hình, em sử dụng **LoRA** — chỉ thêm một lượng nhỏ tham số có thể học — giúp giảm đáng kể bộ nhớ GPU và thời gian huấn luyện. Thư viện **Unsloth** tối ưu thêm tốc độ forward/backward pass lên đến 2x so với cài đặt gốc.
@@ -10,7 +13,7 @@
 | Phương pháp      | LoRA (PEFT) + Instruction Tuning |
 | Thư viện training | Unsloth + TRL (SFTTrainer)       |
 | Tập dữ liệu      | Banking77 (77 classes)           |
-| Môi trường       | Google Colab                   |
+| Môi trường       | Google Colab                     |
 
 ## 2. Cấu trúc thư mục
 
@@ -18,27 +21,26 @@
 banking-intent-unsloth/
 │
 ├── configs/
-│   ├── train.yaml          # Cấu hình hyperparameter huấn luyện
-│   └── inference.yaml      # Cấu hình đường dẫn model cho inference
+│   ├── train.yaml           # Cấu hình hyperparameter huấn luyện
+│   └── inference.yaml       # Cấu hình đường dẫn model cho inference
 │
 ├── scripts/
-│   ├── preprocess_data.py  # Tiền xử lý và chia tách dữ liệu
-│   ├── train.py            # Script huấn luyện chính
-│   ├── inference.py        # Class IntentClassification cho inference
-│   └── evalute.py          # Đánh giá base model và fine-tuned model
+│   ├── preprocess_data.py   # Tiền xử lý và chia tách dữ liệu
+│   ├── train.py             # Script huấn luyện chính
+│   ├── inference.py         # Class IntentClassification cho inference
+│   └── evaluate.py          # Đánh giá base model và fine-tuned model
 │
 ├── sample_data/
-│   ├── train.csv           # Tập huấn luyện
-│   ├── test.csv            # Tập kiểm tra
-│   └── labels.csv          # Danh sách nhãn (77 intents)
+│   ├── train.csv            # Tập huấn luyện
+│   ├── test.csv             # Tập kiểm tra
+│   └── labels.csv           # Danh sách nhãn (77 intents)
 │
-├── train.sh                # Shell script chạy pipeline huấn luyện
-├── inference.sh            # Shell script chạy inference
-├── requirements.txt        # Danh sách thư viện cần cài đặt
+├── train.sh                 # Shell script chạy pipeline huấn luyện
+├── inference.sh             # Shell script chạy inference
+├── requirements.txt         # Danh sách thư viện cần cài đặt
 └── README.md
 
 ```
-
 
 ## 3. Tập dữ liệu
 
@@ -90,18 +92,18 @@ Tất cả hyperparameter được quản lý tập trung tại file [`configs/t
 
 ### 4.2 Cấu hình LoRA (PEFT)
 
-| Tham số                  | Giá trị                                                         | Mô tả                                                           |
-| ------------------------ | --------------------------------------------------------------- | --------------------------------------------------------------- |
-| `lora.r`                 | `16`                                                            | Rank của ma trận LoRA — cân bằng giữa khả năng học và tham số   |
-| `lora.alpha`             | `32`                                                            | Hệ số scaling LoRA                                              |
-| `lora.dropout`           | `0.05`                                                          | Dropout áp dụng lên LoRA layers để tránh overfitting            |
-| `target_modules`         | `q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj` | Các module được gắn LoRA adapter                                |
-| `bias`                   | `none`                                                          | Không huấn luyện bias terms                                     |
-| `gradient_checkpointing` | `unsloth`                                                       | Tối ưu bộ nhớ với unsloth gradient checkpointing                |
+| Tham số                   | Giá trị                                                         | Mô tả                                                                  |
+| -------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `lora.r`                 | `16`                                                            | Rank của ma trận LoRA — cân bằng giữa khả năng học và tham số |
+| `lora.alpha`             | `32`                                                            | Hệ số scaling LoRA                                                     |
+| `lora.dropout`           | `0.05`                                                          | Dropout áp dụng lên LoRA layers để tránh overfitting               |
+| `target_modules`         | `q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj` | Các module được gắn LoRA adapter                                    |
+| `bias`                   | `none`                                                          | Không huấn luyện bias terms                                           |
+| `gradient_checkpointing` | `unsloth`                                                       | Tối ưu bộ nhớ với unsloth gradient checkpointing                    |
 
 ### 4.3 Cấu hình Huấn luyện
 
-| Tham số                  | Giá trị      | Mô tả                                                                        |
+| Tham số                   | Giá trị      | Mô tả                                                                        |
 | -------------------------- | -------------- | ------------------------------------------------------------------------------ |
 | `batch_size`             | `16`         | Số mẫu xử lý mỗi bước trên mỗi GPU                                    |
 | `learning_rate`          | `2e-4`       | Tốc độ học — phù hợp với LoRA fine-tuning                              |
@@ -114,14 +116,14 @@ Tất cả hyperparameter được quản lý tập trung tại file [`configs/t
 | `eval_strategy`          | `epoch`      | Đánh giá trên tập test sau mỗi epoch                                     |
 | `save_strategy`          | `epoch`      | Lưu checkpoint sau mỗi epoch                                                 |
 | `load_best_model_at_end` | `True`       | Tự động load checkpoint tốt nhất sau khi training kết thúc              |
-| `fp16` / `bf16`          | Tự động      | Mixed precision — fp16 hoặc bf16 tùy phần cứng GPU                        |
+| `fp16` / `bf16`        | Tự động     | Mixed precision — fp16 hoặc bf16 tùy phần cứng GPU                        |
 
 ### 4.4 Cấu hình Inference
 
-| Tham số            | Giá trị                           | Mô tả                                       |
-| ------------------- | ----------------------------------- | --------------------------------------------- |
-| `checkpoint_path` | `checkpoints/qwen_banking_intent` | Đường dẫn đến model đã fine-tune      |
-| `max_seq_length`  | `256`                             | Khớp với max_seq_length lúc training |
+| Tham số            | Giá trị                           | Mô tả                                  |
+| ------------------- | ----------------------------------- | ---------------------------------------- |
+| `checkpoint_path` | `checkpoints/qwen_banking_intent` | Đường dẫn đến model đã fine-tune |
+| `max_seq_length`  | `256`                             | Khớp với max_seq_length lúc training  |
 
 ## 5.Triển khai trên Google Colab
 
@@ -221,7 +223,7 @@ Predicted Intent: card_swallowed
 ### Bước 8 — Đánh giá mô hình
 
 ```python
-!python scripts/evalute.py
+!python scripts/evaluate.py
 ```
 
 Script này sẽ:

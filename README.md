@@ -195,9 +195,9 @@ colab_dest_dir = "/content/banking-intent-unsloth/checkpoints"
 print(f"Loading model checkpoints from Drive to: {colab_dest_dir}")
 try:
     shutil.copytree(drive_source_dir, colab_dest_dir, dirs_exist_ok=True)
-    print("✅ Successfully loaded checkpoints from Google Drive back to Colab!")
+    print("Successfully loaded checkpoints from Google Drive back to Colab!")
 except Exception as e:
-    print(f"❌ An error occurred: {e}")
+    print(f"An error occurred: {e}")
 ```
 
 ### Bước 7 — Chạy Inference (Demo thử nghiệm)
